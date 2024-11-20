@@ -87,7 +87,7 @@ function [M2, M5, M4] = funcionRungeKuttaOrden4()
             k4 = f(xk4, yk4);
 
             % Calcular el siguiente valor de y.
-            yii = yi + (h / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
+            yii = yi + (1 / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
 
             % Guardar resultados.
             M3 = num2cell([i, k1, xk2, yk2, k2, xk3, yk3, k3, xk4, yk4, k4, yii]);
