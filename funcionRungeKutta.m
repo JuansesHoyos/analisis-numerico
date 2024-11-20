@@ -1,6 +1,6 @@
 function [M2, M5, M4] = funcionRungeKutta()
     % FUNCIONRUNGEKUTTA Método de Runge-Kutta de 3er orden para resolver ecuaciones diferenciales.
-    % Solicita los datos necesarios por consola y realiza los cálculos iterativos.
+    % Solicita los datos necesarios por consola y realiza los cálculos iterativos, además de graficar los resultados.
     %
     % Salidas:
     %   - M2: Tabla con los valores intermedios en cada iteración.
@@ -100,4 +100,13 @@ function [M2, M5, M4] = funcionRungeKutta()
     disp(M5);
     fprintf('Vector de valores de y (M4):\n');
     disp(M4);
+
+    % Graficar los resultados.
+    figure;
+    plot(M5, M4, '-o', 'LineWidth', 2, 'MarkerSize', 6, 'MarkerFaceColor', 'r');
+    grid on;
+    title('Método de Runge-Kutta');
+    xlabel('x');
+    ylabel('y');
+    legend('Solución aproximada');
 end

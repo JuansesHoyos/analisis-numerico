@@ -38,6 +38,20 @@ function [x_solucion, M] = funcionNewtonRaphson()
     eA = 100; % Error relativo inicial.
     M = []; % Matriz para almacenar los resultados de cada iteración.
 
+    % Rango para graficar la función
+    f_func = matlabFunction(f); % Convertir la función simbólica a una función de MATLAB
+    x_vals = linspace(xi-5, xi+5, 400); % Rango alrededor de xi para graficar la función
+    y_vals = f_func(x_vals); % Evaluar la función en ese rango
+
+    % Graficar la función
+    figure; 
+    plot(x_vals, y_vals, 'b-', 'LineWidth', 2); % Graficar la función
+    hold on;
+    xlabel('x');
+    ylabel('f(x)');
+    title('Método de Newton-Raphson');
+    grid on;
+    
     % Método iterativo de Newton-Raphson.
     while eA > criterioDeParada
         xi1 = x_solucion; % Guardar el valor anterior de xi.
@@ -66,6 +80,9 @@ function [x_solucion, M] = funcionNewtonRaphson()
             M(i, :) = [i, xi, fxi, dfxi, x_solucion, eA];
         end
 
+        % Graficar el punto actual de la iteración
+        plot(xi, fxi, 'ro', 'MarkerFaceColor', 'r'); % Mostrar el punto de la iteración
+
         % Verificar si se ha cumplido el criterio de parada.
         if eA <= criterioDeParada
             break;
@@ -78,4 +95,9 @@ function [x_solucion, M] = funcionNewtonRaphson()
     fprintf('\nSolución aproximada: %.6f\n', x_solucion);
     fprintf('Tabla de resultados:\n');
     disp(array2table(M, 'VariableNames', {'Iteración', 'xi', 'f(xi)', 'f''(xi)', 'x_siguiente', 'Error (%)'}));
+
+    % Graficar la solución final
+    plot(x_solucion, f_func(x_solucion), 'go', 'MarkerFaceColor', 'g'); % Mostrar la raíz final en verde
+    legend('Función f(x)', 'Iteraciones de Newton-Raphson', 'Raíz final');
+    hold off;
 end

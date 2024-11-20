@@ -1,7 +1,7 @@
 function [polinomio, tablaDiferencias] = funcionInterpolacionNewton()
     % FUNCIONINTERPOLACIONNEWTON Calcula el polinomio de interpolación de Newton
     % y la tabla de diferencias divididas.
-    %
+    % 
     % Solicita los puntos (xi, yi) desde la consola y construye el polinomio.
     %
     % Salida:
@@ -58,4 +58,18 @@ function [polinomio, tablaDiferencias] = funcionInterpolacionNewton()
     fprintf('La tabla de diferencias divididas es:\n');
     disp(array2table(tablaDiferencias, 'VariableNames', compose('D%d', 0:n-1)));
 
+    % Graficar los puntos dados y el polinomio de Newton
+    f = matlabFunction(polinomio); % Convertir el polinomio simbólico a una función
+    x_range = linspace(min(xi) - 1, max(xi) + 1, 400); % Rango para la gráfica
+    y_range = f(x_range); % Evaluar el polinomio en el rango
+
+    figure; % Crear nueva figura
+    plot(xi, yi, 'ro', 'MarkerFaceColor', 'r'); % Puntos originales en rojo
+    hold on;
+    plot(x_range, y_range, 'b-', 'LineWidth', 2); % Polinomio interpolante en azul
+    xlabel('x');
+    ylabel('y');
+    title('Polinomio de Interpolación de Newton');
+    legend('Puntos originales', 'Polinomio Interpolante');
+    grid on;
 end
