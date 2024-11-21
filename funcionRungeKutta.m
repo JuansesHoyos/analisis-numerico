@@ -1,49 +1,70 @@
-function [M2, M5, M4] = funcionRungeKuttaOrden4()
-    % FUNCIONRUNGEKUTTAORDEN4 Método de Runge-Kutta de 4to orden para resolver ecuaciones diferenciales.
-    %
-    % Salidas:
-    %   - M2: Tabla con los valores intermedios en cada iteración.
-    %   - M5: Vector de valores de x en cada paso.
-    %   - M4: Vector de valores de y en cada paso.
-    %
-    % Ejemplo de uso:
-    %   Ejecutar la función y seguir las instrucciones en la consola.
+function funcionRungeKutta()
+    % Crear la figura principal para la interfaz gráfica.
+    fig = uifigure('Position', [100, 100, 800, 600], 'Name', 'Método de Runge-Kutta de 4to Orden');
 
-    % Solicitar entrada desde la consola.
+    % Panel para las entradas
+    panelInputs = uipanel(fig, 'Title', 'Entradas', 'Position', [20, 350, 360, 200]);
+    
+    % Etiquetas y campos de entrada para los valores de la función, x0, y0, h, y n.
+    uilabel(panelInputs, 'Text', 'Introduce la función: ', 'Position', [10, 140, 100, 22]);
+    inputFunction = uieditfield(panelInputs, 'text', 'Position', [120, 140, 200, 22]);
+
+    uilabel(panelInputs, 'Text', 'Valor de x0:', 'Position', [10, 100, 100, 22]);
+    inputX0 = uieditfield(panelInputs, 'numeric', 'Position', [120, 100, 200, 22]);
+
+    uilabel(panelInputs, 'Text', 'Valor de y0:', 'Position', [10, 70, 100, 22]);
+    inputY0 = uieditfield(panelInputs, 'numeric', 'Position', [120, 70, 200, 22]);
+
+    uilabel(panelInputs, 'Text', 'Tamaño del h:', 'Position', [10, 40, 100, 22]);
+    inputH = uieditfield(panelInputs, 'numeric', 'Position', [120, 40, 200, 22]);
+
+    uilabel(panelInputs, 'Text', 'Número de pasos:', 'Position', [10, 10, 100, 22]);
+    inputN = uieditfield(panelInputs, 'numeric', 'Position', [120, 10, 200, 22]);
+    
+    % Botón para ejecutar el cálculo.
+    btnCalcular = uibutton(fig, 'push', 'Text', 'Calcular', ...
+        'Position', [140, 300, 120, 40], 'ButtonPushedFcn', @(~,~)calcularRungeKutta());
+    
+    % Área para mostrar la tabla de resultados.
+    tablaResultados = uitable(fig, 'Position', [400, 350, 360, 200],...
+        'ColumnName', {'Iteración', 'k1', 'xk2', 'yk2', 'k2', 'xk3', 'yk3', 'k3', 'xk4', 'yk4', 'k4', 'yii'});
+
+    % Área de los ejes donde se mostrará el gráfico.
+    ax = uiaxes(fig, 'Position', [50, 50, 700, 250]);
+    title(ax, 'Método de Runge-Kutta de 4to Orden');
+    xlabel(ax, 'x');
+    ylabel(ax, 'y');
+    grid(ax, 'on');
+
+function calcularRungeKutta()
+    % Obtener los valores ingresados por el usuario.
     try
-        funcionMatematica = input('Introduce la función en términos de x e y (ejemplo: x+y): ', 's');
-        f = str2func(['@(x,y)' funcionMatematica]); % Convertir a función anónima.
+        funcionStr = inputFunction.Value;
+        f = str2func(['@(x, y) ' funcionStr]);
+        x0 = inputX0.Value;
+        y0 = inputY0.Value;
+        h = inputH.Value;
+        n = inputN.Value;
     catch
-        error('Error: La función ingresada no es válida. Verifica la sintaxis.');
+        uialert(fig, 'Por favor ingrese valores válidos para la función y los parámetros.', 'Error', 'Icon', 'error');
+        return;
     end
 
-    x = input('Introduce el valor inicial de x (x0): ');
-    y = input('Introduce el valor inicial de y (y0): ');
-    h = input('Introduce el tamaño del paso (h): ');
-    n = input('Introduce el número de pasos (n): ');
+    % Validar entradas.
+    if n <= x0
+        uialert(fig, 'El valor final (n) debe ser mayor que x0.', 'Error', 'Icon', 'error');
+        return;
+    end
 
-    % Validaciones de entrada.
-    if ~isnumeric(x) || ~isscalar(x)
-        error('Error: x0 debe ser un número escalar.');
-    end
-    if ~isnumeric(y) || ~isscalar(y)
-        error('Error: y0 debe ser un número escalar.');
-    end
-    if ~isnumeric(h) || ~isscalar(h) || h <= 0
-        error('Error: h debe ser un número positivo.');
-    end
-    if ~isnumeric(n) || ~isscalar(n) || n <= 0 || mod(n,1) ~= 0
-        error('Error: n debe ser un número entero positivo.');
+    if mod((n - x0), h) ~= 0
+        uialert(fig, 'El valor final (n) debe ser consistente con el tamaño de paso (h).', 'Error', 'Icon', 'error');
+        return;
     end
 
     % Inicializar variables.
-    x0 = x;
-    y0 = y;
-    k1 = 0; k2 = 0; k3 = 0; k4 = 0;
-    yii = 0;
-    xi = 0;
-
-    M2 = {}; % Tabla de resultados inicializada como una celda vacía.
+    x = x0;
+    y = y0;
+    M2 = {}; % Tabla de resultados.
     M5 = zeros(1, n); % Vector de valores de x.
     M4 = zeros(1, n); % Vector de valores de y.
 
@@ -97,20 +118,18 @@ function [M2, M5, M4] = funcionRungeKuttaOrden4()
         end
     end
 
-    % Mostrar los resultados en la consola.
-    fprintf('\nTabla de resultados (M2):\n');
-    disp(cell2table(M2, 'VariableNames', {'Iteración', 'k1', 'xk2', 'yk2', 'k2', 'xk3', 'yk3', 'k3', 'xk4', 'yk4', 'k4', 'yii'}));
-    fprintf('Vector de valores de x (M5):\n');
-    disp(M5);
-    fprintf('Vector de valores de y (M4):\n');
-    disp(M4);
+    % Mostrar los resultados en la tabla.
+    tablaResultados = findobj(fig, 'Type', 'uitable');
+    tablaResultados.Data = cell2mat(M2);
 
-    % Graficar los resultados.
-    figure;
-    plot(M5, M4, '-o', 'LineWidth', 2, 'MarkerSize', 6, 'MarkerFaceColor', 'r');
-    grid on;
-    title('Método de Runge-Kutta de 4to Orden');
-    xlabel('x');
-    ylabel('y');
-    legend('Solución aproximada');
+    % Graficar los resultados en los ejes dentro de la misma interfaz.
+    ax = findobj(fig, 'Type', 'axes');
+    cla(ax);  % Limpiar los ejes antes de volver a dibujar
+    plot(ax, M5, M4, '-o', 'LineWidth', 2, 'MarkerSize', 6, 'MarkerFaceColor', 'r');
+    grid(ax, 'on');
+    title(ax, 'Método de Runge-Kutta de 4to Orden');
+    xlabel(ax, 'x');
+    ylabel(ax, 'y');
+    legend(ax, 'Solución aproximada');
+end
 end

@@ -1,15 +1,4 @@
 function [polinomio, tablaDiferencias] = funcionInterpolacionNewton()
-    % FUNCIONINTERPOLACIONNEWTON Calcula el polinomio de interpolación de Newton
-    % y la tabla de diferencias divididas.
-    % 
-    % Solicita los puntos (xi, yi) desde la consola y construye el polinomio.
-    %
-    % Salida:
-    %   - polinomio: Polinomio simbólico de interpolación.
-    %   - tablaDiferencias: Tabla de diferencias divididas.
-    %
-    % Ejemplo de uso:
-    %   Ejecutar la función y seguir las instrucciones en la consola.
     
     % Solicitar puntos xi y yi desde la consola.
     try
